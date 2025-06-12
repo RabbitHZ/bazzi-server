@@ -11,7 +11,7 @@ import lombok.Setter;
 @Schema(description = "Badge 요청 DTO")
 public class BadgeRequestDto {
 
-    @Schema(description = "github url", example = "https://github.com/example")
+    @Schema(description = "github url", example = "https://github.com/username")
     private String url = "";
 
     @Schema(description = "뱃지 색상", example = "blue")

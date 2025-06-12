@@ -6,4 +6,5 @@ public interface ViewCountService {
     ViewCountResponseDto getViewCount(String username);
     ViewCountResponseDto incrementViewCount(String username);
     ViewCountResponseDto resetViewCount(String username);
+    void updateTotalWithToday(String username);
 }

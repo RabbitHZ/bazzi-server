@@ -30,4 +30,9 @@ public class ViewCountServiceImpl implements ViewCountService {
         redisViewCountRepository.resetViewCount(username);
         return getViewCount(username);
     }
+
+    @Override
+    public void updateTotalWithToday(String username) {
+        redisViewCountRepository.updateTotalWithToday(username);
+    }
 }

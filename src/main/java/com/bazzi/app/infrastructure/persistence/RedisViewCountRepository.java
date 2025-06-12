@@ -4,16 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class RedisViewCountRepository {
 
-    private final RedisTemplate<String, String> redisTemplate;
-
-    public RedisViewCountRepository(@Qualifier("stringRedisTemplate") RedisTemplate<String, String> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
+    private final StringRedisTemplate redisTemplate;
 
     private static final String TODAY_KEY_PREFIX = "today:";
     private static final String TOTAL_KEY_PREFIX = "total:";
@@ -50,5 +48,17 @@ public class RedisViewCountRepository {
         String totalKey = TOTAL_KEY_PREFIX + username;
         redisTemplate.opsForValue().set(todayKey, "0");
         redisTemplate.opsForValue().set(totalKey, "0");
+    }
+
+    //오늘 조회수, 전체 조회수에 업데이트
+    public void updateTotalWithToday(String username){
+        String todayKey = TODAY_KEY_PREFIX + username;
+        String totalKey = TOTAL_KEY_PREFIX + username;
+        String todayCount = redisTemplate.opsForValue().get(todayKey);
+        int today = Integer.parseInt(todayCount != null ? todayCount : "0");
+        if (today > 0) {
+            redisTemplate.opsForValue().increment(totalKey, today);
+            redisTemplate.opsForValue().set(todayKey, "0"); // 오늘 조회수 초기화
+        }
     }
 }
