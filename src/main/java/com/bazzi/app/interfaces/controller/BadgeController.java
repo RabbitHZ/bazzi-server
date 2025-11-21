@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,19 +25,33 @@ public class BadgeController {
     private final ViewCountService viewCountService;
 
     @Operation(summary = "뱃지 생성", description = "조회수를 포함한 실시간 뱃지를 생성하고 조회수를 1 증가")
-    @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
-    public String generateBadge(@ModelAttribute BadgeRequestDto request){
+    @GetMapping(produces = "image/svg+xml")
+    public ResponseEntity<String> generateBadge(@ModelAttribute BadgeRequestDto request){
         String url = request.getUrl();
         String username = url.substring(url.lastIndexOf("/") + 1);
         ViewCountResponseDto responseDto = viewCountService.incrementViewCount(username);
-        return SvgGenerator.generateBadge(request.getColor(), request.getLabel(),request.getFontSize(), responseDto.getToday(), responseDto.getTotal());
+        String svg = SvgGenerator.generateBadge(request.getColor(), request.getLabel(),request.getFontSize(), responseDto.getToday(), responseDto.getTotal());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.valueOf("image/svg+xml"));
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(svg);
     }
 
     @Operation(summary = "뱃지 미리보기 생성", description = "조회수를 증가시키지 않고 뱃지를 미리 조회.")
-    @GetMapping(value = "/preview", produces = MediaType.APPLICATION_XML_VALUE)
-    public String generatePreviewBadge(@ModelAttribute BadgeRequestDto request){
+    @GetMapping(value = "/preview", produces = "image/svg+xml")
+    public ResponseEntity<String> generatePreviewBadge(@ModelAttribute BadgeRequestDto request){
         String url = request.getUrl();
         String username = url.substring(url.lastIndexOf("/") + 1);
-        return SvgGenerator.generateBadge(request.getColor(), request.getLabel(), request.getFontSize(), 0, 0);
+        String svg = SvgGenerator.generateBadge(request.getColor(), request.getLabel(), request.getFontSize(), 0, 0);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.valueOf("image/svg+xml"));
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(svg);
     }
 }
