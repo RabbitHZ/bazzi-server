@@ -32,19 +32,23 @@ public class RedisConfig {
         RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
         redisConfig.setHostName(host);
         redisConfig.setPort(port);
-        redisConfig.setUsername("default");  // Upstash는 반드시 default 사용
-        redisConfig.setPassword(password);
-        
+
+        // 패스워드가 있을 때만 인증 설정
+        if (password != null && !password.isEmpty()) {
+            redisConfig.setUsername("default");  // Upstash는 반드시 default 사용
+            redisConfig.setPassword(password);
+        }
+
         // Lettuce 클라이언트 설정
-        LettuceClientConfiguration.LettuceClientConfigurationBuilder clientConfig = 
+        LettuceClientConfiguration.LettuceClientConfigurationBuilder clientConfig =
             LettuceClientConfiguration.builder()
                 .commandTimeout(Duration.ofSeconds(10));
-        
+
         // SSL 설정
         if (sslEnabled) {
             clientConfig.useSsl();
         }
-        
+
         return new LettuceConnectionFactory(redisConfig, clientConfig.build());
     }
     
