@@ -68,18 +68,18 @@ project-root/
 ## 📋 API 명세
 ### 1. 조회수 관리 API
 
-| 메서드    | 엔드포인트              | 설명                     | 요청 파라미터                        | 응답값                                |
-| ------ | ------------------ | ---------------------- | ------------------------------ | ---------------------------------- |
-| `GET`  | `/api/viewcount/{username}` | 조회수 조회(오늘/전체)   | `username`(Path)  | `{ today: number, total: number }` |
-| `POST` | `/api/viewcount/{username}/increment` | 조회수 증가 (오늘/전체)       | `username`(Path)  | `{ today: number, total: number }` |
-| `POST`  | `/api/viewcount/{username}/reset` | 조회수 초기화 (오늘/전체 0으로 설정) | `username`(Path) | `{ success: boolean }`             |
+| 메서드 | 엔드포인트 | 설명 | 요청 파라미터 | 응답(성공)                                                                                                                         | 응답 코드 |
+| --- | --- | --- | --- |--------------------------------------------------------------------------------------------------------------------------------| --- |
+| `GET` | `/api/viewcounts/{username}` | 사용자별 조회수 조회 (오늘/전체) | `username` (Path) | {<br>"status": 200,<br> "success": true,<br> "message": "조회수 조회 성공",<br> "data": {<br> "today": 3,<br> "total": 129 <br>}<br>} | 200 (성공)<br>400 (잘못된 요청)<br>500 (서버 내부 오류) |
+| `POST` | `/api/viewcounts/{username}` | 조회수 증가 | `username` (Path) | {<br>"status": 200,<br> "success": true,<br>"message": "조회수 증가 성공",<br> "data": {<br> "today": 4,<br> "total": 130 <br>}<br> } | 200 (성공)<br>400 (잘못된 요청)<br>500 (서버 내부 오류) |
+| `PATCH` | `/api/viewcounts/{username}` | 조회수 초기화 (0으로 설정) | `username` (Path) | {<br> "status": 200,<br> "success": true,<br>"message": "조회수 초기화 성공",<br> "data": {<br> "today": 0,<br> "total": 0 <br>}<br> }                             | 200 (성공)<br>400 (잘못된 요청)<br>500 (서버 내부 오류) |
 
 ### 2. 뱃지 관리 API
 
-| 메서드   | 엔드포인트                | 설명                          | 요청 파라미터 (쿼리 스트링)                              | 응답값                       |
-| ----- | -------------------- | --------------------------- | --------------------------------------------- | ------------------------- |
-| `GET` | `/api/badge`         | 조회수 포함 실시간 뱃지 생성 및 조회수 1 증가 | `url`, `label`, `color`, `icon`, `fontSize` 등 | `SVG 문자열 (image/svg+xml)` |
-| `GET` | `/api/badge/preview` | 조회수 증가 없이 뱃지 미리보기           | `url`, `label`, `color`, `icon`, `fontSize` 등 | `SVG 문자열 (image/svg+xml)` |
+| 메서드 | 엔드포인트 | 설명 | 요청 파라미터 (쿼리 스트링)| 응답 (성공)                                                                                                                              | 응답 코드 |
+| --- | --- | --- |-----------------|--------------------------------------------------------------------------------------------------------------------------------------| --- |
+| `GET` | `/api/badges` | 실시간 뱃지 생성 및 조회수 증가 | `url`, `label`, `color`,<br> `icon`, `fontSize` 등 | xml (image/svg+xml) | 200 (성공)<br>400 (잘못된 요청)<br>500 (서버 내부 오류) |
+| `GET` | `/api/badges/preview` | 조회수 증가 없이 뱃지 미리보기 | `url`, `label`, `color`,<br> `icon`, `fontSize` 등 | xml (image/svg+xml)  | 200 (성공)<br>400 (잘못된 요청)<br>500 (서버 내부 오류) |
 
 ## 🚀 설치 및 실행
 ### 사전 요구사항
@@ -108,8 +108,7 @@ spring:
 
 #### 3. 빌드 및 실행
 ```bash
-mvn clean install
-mvn spring-boot:run
+./gradlew bootRun
 ```
 
 #### 4. Swagger UI 접속
@@ -122,7 +121,7 @@ mvn spring-boot:run
 - JUnit 5와 Mockito를 사용해 서비스 및 컨트롤러 단위 테스트를 구현했습니다.
 - 테스트 실행 명령
     ```bash
-    mvn test
+    ./gradlew test
     ```
 
 ## 🛠️ 추가 개선 가능성
