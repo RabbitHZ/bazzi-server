@@ -34,7 +34,8 @@ public class BadgeController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.valueOf("image/svg+xml"));
-        headers.setCacheControl("private, no-cache, no-store, must-revalidate, max-age=0");
+        headers.setCacheControl("private");
+        headers.set("ETag", null);  // ETag 제거
 
         return ResponseEntity.ok()
                 .headers(headers)
