@@ -70,19 +70,13 @@ public class RedisViewCountRepository {
         }
     }
 
-    //오늘 조회수, 전체 조회수에 업데이트
+    //오늘 조회수 초기화
     public void updateTotalWithToday(String username){
         try{
             String todayKey = TODAY_KEY_PREFIX + username;
-            String totalKey = TOTAL_KEY_PREFIX + username;
-            String todayCount = redisTemplate.opsForValue().get(todayKey);
-            int today = Integer.parseInt(todayCount != null ? todayCount : "0");
-            if (today > 0) {
-                redisTemplate.opsForValue().increment(totalKey, today);
-                redisTemplate.opsForValue().set(todayKey, "0"); // 오늘 조회수 초기화
-            }
+            redisTemplate.opsForValue().set(todayKey, "0");
         } catch (Exception e){
-            throw new RuntimeException("오늘 조회수, 전체 조회수에 업데이트 중 오류 발생: " + e.getMessage(), e);
+            throw new RuntimeException("오늘 조회수 초기화 중 오류 발생: " + e.getMessage(), e);
         }
     }
 }
